@@ -32,9 +32,9 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/docker-scan-kwstas:latest
 
-     - name: Scan with Docker Scout
-  uses: docker/scout-action@v1
-  with:
-    command: cves
-    image: ghcr.io/${{ github.repository_owner }}/docker-scan-kwstas:latest
-  continue-on-error: true
+      - name: Scan with Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          command: cves
+          image: ghcr.io/${{ github.repository_owner }}/docker-scan-kwstas:latest
+        continue-on-error: true
