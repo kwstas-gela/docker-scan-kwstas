@@ -1,0 +1,40 @@
+name: Docker Scout Scan
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/docker-scan-kwstas:latest
+
+      - name: Scan with Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          command: cves
+          image: ghcr.io/${{ github.repository_owner }}/docker-scan-kwstas:latest
+          github-token: ${{ secrets.GITHUB_TOKEN }}
